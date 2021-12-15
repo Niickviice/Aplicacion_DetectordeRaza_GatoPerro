@@ -7,7 +7,7 @@
 #      Alan Martínez Ruiz 
 #   
 ##############
-from fastapi import FastAPI
+from fastapi import Depends,FastAPI
 from typing import Optional
 from pydantic import BaseModel
 import shutil
@@ -22,7 +22,7 @@ from sqlalchemy.orm import Session
 app = FastAPI()
 
 @app.get("/usuarios/{id}")
-def usuarios(*,sesion:Session=obten_sesion, id:int):
+def usuarios(*,sesion:Session=Depends(obten_sesion), id:int):
     print("Buscando con id:", id)
     
     user = repo.usuario_por_id(obten_sesion, id)

@@ -30,3 +30,27 @@ INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Persa','gato
 INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Maine Coon','gato', 'Gato con características parecido a un lince, con orejas paradas y pelaje esponjoso','No necesita una atención demasiado meticulosa, cepillarl con frecuencia, cuidar los ojos y sus orejas');
 
 
+DROP TABLE IF EXISTS app.fotos;
+CREATE TABLE app.fotos(
+id SERIAL PRIMARY KEY,
+id_users INTEGER,
+ruta VARCHAR,
+correccion_raza VARCHAR,
+clasificacion_id_raza_primaria INTEGER,
+clasificacion_id_raza_secundaria INTEGER,
+clasificacion_id_raza_terciaria INTEGER,
+porcentaje_clasificacion_primaria FLOAT,
+porcentaje_clasificacion_secundaria FLOAT,
+porcentaje_clasificacion_terciaria FLOAT,
+fecha TIMESTAMP WITH TIME ZONE,
+FOREIGN KEY(id_users) REFERENCES app.users(id),
+FOREIGN KEY(clasificacion_id_raza_primaria) REFERENCES app.razas(id),
+FOREIGN KEY(clasificacion_id_raza_secundaria) REFERENCES app.razas(id),
+FOREIGN KEY(clasificacion_id_raza_terciaria) REFERENCES app.razas(id)
+);
+
+
+INSERT INTO app.fotos(ruta, correccion_raza, fecha) VALUES('1243245654erewr','Pitbull','2021-07-31T15:16:00+08:00');
+INSERT INTO app.fotos(ruta, correccion_raza, fecha) VALUES('45JONIOJOD3E','Ragdoll','2021-09-30T15:19:30+08:00');
+INSERT INTO app.fotos(ruta, correccion_raza, fecha) VALUES('343onior3555','Munchkin','2021-03-31T15:10:10+08:00');
+INSERT INTO app.fotos(ruta, correccion_raza, fecha) VALUES('989h389h4hd3','Mastin','2021-09-13T15:05:24+08:00' );
