@@ -77,3 +77,19 @@ def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int,
     
     return repo.razas(sesion, lote, pag)
 
+#Ruta POST para subir la imagen de usuario
+@app.post("/fotos")
+async def guardar_usuario_fotos(foto:UploadFile=File(...)):
+    
+    
+    home_user = os.path.expanduser("~")
+    nombre_archivo = uuid.uuid4().hex #Se genera noombre en formato hexadecimal 
+    extension = os.path.splitext(foto.filename)[1]
+    ruta_image = f'{home_user}/usuario/fotos/{nombre_archivo}{extension}'
+    print("Imagen guardada en ruta:", ruta_image)   
+    
+    with open(ruta_image, "wb") as imagen:
+        contenido = await foto.read()
+        imagen.write(contenido)
+    
+    return {"foto": foto.filename}

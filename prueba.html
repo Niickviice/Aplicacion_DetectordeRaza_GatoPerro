@@ -7,9 +7,11 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="/api_rutas.py" method="get">
-    <label for="id">Id: </label>
-    <input type="submit" value="Submit">
+    <form method="post" action="http://localhost:8000/fotos">
+        
+        <div> Foto<input type="file" name="foto"/> </div>
+
+        <div><input type="submit" name="enviar" ></div>
     </form>
 </body>
 <script>
