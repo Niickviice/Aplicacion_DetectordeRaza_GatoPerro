@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime
+from sqlalchemy.orm import relationship
 from orm.config import BaseClass
 import datetime
 
@@ -16,19 +17,29 @@ class Razas(BaseClass):
     __tablename__="razas"
     id = Column(Integer, primary_key=True)
     raza = Column(String(300))
+    raza_alias = Column(String(300))
     especie = Column(String(300))
     descripcion = Column(String)
     cuidados = Column(String)
     
 class Fotos(BaseClass):
     __tablename__ = "fotos"
-    id_users  = Column(Integer, primary_key=True)
-    id = Column(Integer)
+    id = Column(Integer, primary_key=True)
+    id_users = Column(Float, ForeignKey(Users.id))
     ruta = Column(String)
-    correccion_raza = Column(String)
-    clasificacion_id_raza_primaria = Column(Float, ForeignKey(Users.id))
-    clasificacion_id_raza_secundaria = Column(Float, ForeignKey(Users.id))
-    clasificacion_id_raza_terciaria = Column(Float, ForeignKey(Users.id))
-    fecha  = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
+    correccion_raza = Column(String)    
+    clasificacion_id_raza_primaria = Column(Integer, ForeignKey(Razas.id))
+    clasificacion_id_raza_secundaria = Column(Integer, ForeignKey(Razas.id))
+    clasificacion_id_raza_terciaria = Column(Integer, ForeignKey(Razas.id))
+    porcentaje_clasificacion_primaria = Column(Float)
+    porcentaje_clasificacion_secundaria = Column(Float)
+    porcentaje_clasificacion_terciaria = Column(Float)
+    fecha  = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)    
+    # mapeo de relacion uno-a-uno con tabla Razas
+    razaPrimaria = relationship("Razas", foreign_keys=clasificacion_id_raza_primaria,lazy="subquery")        
+    razaSecundaria = relationship("Razas", foreign_keys=clasificacion_id_raza_secundaria,lazy="subquery")        
+    razaTerciaria = relationship("Razas", foreign_keys=clasificacion_id_raza_terciaria,lazy="subquery")        
+
+
     
     

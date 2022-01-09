@@ -15,10 +15,11 @@ INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha
 INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Beach_house@gmail.com','0832083','Mariana Villalon','52243432','13hs8d9wtrfd34','2021-07-31T15:09:22+08:00');
 INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Men_i_trust@gmail.com','9384756','Leida Figueroa','55094413','0ds3ed9j90qq0','2021-07-31T15:16:00+08:00');
 
-DROP TABLE IF EXISTS app.raza CASCADE;
+DROP TABLE IF EXISTS app.razas CASCADE;
 CREATE TABLE app.razas(
-	id SERIAL PRIMARY KEY,
-	raza VARCHAR(300) UNIQUE,
+	id SERIAL PRIMARY KEY,	
+	raza VARCHAR(300) UNIQUE, /*este nombre debe de coincidir con el de las clases usadas en etrenamiento*/
+	raza_alias VARCHAR(300),
 	especie VARCHAR(300),
 	descripcion VARCHAR,
 	cuidados VARCHAR
@@ -28,6 +29,45 @@ INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Boxer','perr
 INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Chihuahua','perro', 'raza pequeña, con orejas largas, patitas cortas','Perro de caracter nervioso y agresivo, delicado en los frios se debe mantener en lugares cerrados');
 INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Persa','gato', 'Gato con características de pelaje espezo, orejas cortas y patas largas','Cepillarlo diario, cortarle sus garras, cecarlo con una toalla especial después de bañarse');
 INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Maine Coon','gato', 'Gato con características parecido a un lince, con orejas paradas y pelaje esponjoso','No necesita una atención demasiado meticulosa, cepillarl con frecuencia, cuidar los ojos y sus orejas');
+
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Abyssinian','gato','Abisinio (gato)');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('american_bulldog','perro','Bulldog americano');      
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('american_pit_bull_terrier','perro','American Pitbull 
+Terrier');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('basset_hound','perro','Basset hound');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('beagle','perro','Beagle');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Bengal','gato','Bengala');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Birman','gato','Birmano');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Bombay','gato','Bombay');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('boxer','perro','Boxer');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('British_Shorthair','gato','Británico de pelo corto');      
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('chihuahua','perro','Chihuahua');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Egyptian_Mau','gato','Mau egipcio');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('english_cocker_spaniel','perro','Cocker spaniel inglés');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('english_setter','perro','Setter inglés');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('german_shorthaired','perro','Braco alemán de pelo corto');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('great_pyrenees','perro','Perro de montaña de los pirineos');     
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('havanese','perro','Bichón habanero');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('japanese_chin','perro','Spaniel japonés');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('keeshond','perro','Keeshond');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('leonberger','perro','Leonberger');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Maine_Coon','gato','Maine Coon');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('miniature_pinscher','perro','Pinscher miniatura');   
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('newfoundland','perro','Perro de Terranova');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Persian','gato','Persiana americana');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('pomeranian','perro','Pomerania (perro)');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('pug','perro','Pug');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Ragdoll','gato','Ragdoll');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Russian_Blue','gato','Azul ruso');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('saint_bernard','perro','Saint Bernard');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('samoyed','perro','Samoyedo');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('scottish_terrier','perro','Terrier escocés');        
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('shiba_inu','perro','Shiba Inu');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Siamese','gato','Siamés');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Sphynx','gato','Esfinge');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('staffordshire_bull_terrier','perro','Staffordshire bull terrier');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('wheaten_terrier','perro','Irish soft coated wheaten terrier');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('yorkshire_terrier','perro','Yorkshire terrier'); 
 
 
 DROP TABLE IF EXISTS app.fotos;
