@@ -4,10 +4,15 @@ from sqlalchemy import func
 import orm.modelos as modelos
 import constantes as constantes
 from orm.esquemas import PrediccionRaza, UsersBD
+from seguridad import autenticacion
 
 #Solicitud de usuarios (Por id)
 def usuario_por_id(sesion : Session, id : int):
     return sesion.query(modelos.Users).filter(modelos.Users.id == id).first()
+
+#Solicitud de usuarios (Por email)
+def usuario_por_email(sesion : Session, email : str):
+    return sesion.query(modelos.Users).filter(modelos.Users.email_user == email).first()
 
 #Solicitud de usuario (todos los renglones de la tabla razas)
 def usuarios(sesion : Session, lote : int, pag : int):
@@ -29,7 +34,7 @@ def raza_por_nombre_raza(sesion: Session, nombre_raza: str):
 def guardar_usuario(sesion : Session, usr:UsersBD):    
     usr_nuevo = modelos.Users()    
     usr_nuevo.email_user = usr.email
-    usr_nuevo.password_hash = usr.password
+    usr_nuevo.password_hash = autenticacion.obtener_password_hash(usr.password)
     usr_nuevo.nombre = usr.nombre
     usr_nuevo.telefono = usr.telefono
     
@@ -46,9 +51,8 @@ def actualizar_usuario(sesion:Session, id_usuario:int, usr:UsersBD):
     
     usr_act.nombre = usr.nombre
     usr_act.email_user = usr.email
-    usr_act.password_hash = usr.password
+    usr_act.password_hash = autenticacion.obtener_password_hash(usr.password)
     usr_act.telefono = usr.telefono
-    usr_act.ruta_avatar = usr.ruta_avatar
 
     sesion.commit()
     sesion.refresh(usr_act)

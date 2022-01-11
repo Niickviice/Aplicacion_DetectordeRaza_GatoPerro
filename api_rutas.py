@@ -11,11 +11,13 @@
 #                               #
 #################################
 
-from fastapi import Body, Depends, FastAPI, UploadFile, File, Form 
+from fastapi import Body, Depends, FastAPI, UploadFile, File, Form,HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
 from fastapi.param_functions import Form
 from pydantic import BaseModel
+from datetime import timedelta
 import shutil
 import os
 import uuid
@@ -28,10 +30,13 @@ from sqlalchemy.orm import Session, session
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from vgg16 import clasificador
+from seguridad import autenticacion
 
 
 app = FastAPI()
+#indicamos la carpeta de rutas para las fotos
 app.mount(constantes.FOTOS_RUTA_VIRTUAL, StaticFiles(directory=constantes.FOTOS_RUTA_REAL), name="static-fotos")
+#activamos CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins={"*"},
@@ -40,9 +45,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ruta para obtener token jwt
+@app.post("/token", response_model=autenticacion.Token)
+async def login_para_obtener_token(*,sesion:Session=Depends(obten_sesion), form_data: OAuth2PasswordRequestForm = Depends()):
+    #autentificamos si el usuario es valido        
+    email = form_data.username
+    password = form_data.password
+    user = autenticacion.autentificar_usuario(sesion,email,password)
+    if not user:
+        #si no es valido regresamos un error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    #si es valido creamos su token de acceso
+    access_token = autenticacion.crear_token_acceso(email)
+    #regresamos el token y tipo de token (bearer para jwt)
+    return {"access_token": access_token, "token_type": "bearer"}
+
 #Ruta Get para obtener la tabla de usuarios por id 
 @app.get("/usuario/{id}")
-def usuario_por_id(*,sesion:Session=Depends(obten_sesion), id:int):
+def usuario_por_id(*,sesion:Session=Depends(obten_sesion), id:int,token: str = Depends(autenticacion.validar_token_usuario)):
     print("Buscando con id:", id)
     
     user = repo.usuario_por_id(sesion, id)
@@ -57,13 +81,13 @@ def registro(*,sesion:Session=Depends(obten_sesion), usuario:UsersBD):
 
 #Ruta Put, para actualizar información del usuario 
 @app.put("/usuario/{id}")
-def actualizar_usuario(*,sesion:Session=Depends(obten_sesion), id:int,  usuario:UsersBD):
+def actualizar_usuario(*,sesion:Session=Depends(obten_sesion), id:int,  usuario:UsersBD, token:str=Depends(autenticacion.validar_token_usuario)):
     
     return repo.actualizar_usuario(sesion, id, usuario)
 
 #Ruta Get para obtener la tabla de razas por id 
 @app.get("/razas/{id}")
-def raza_por_id(*,sesion:Session=Depends(obten_sesion), id:int):
+def raza_por_id(*,sesion:Session=Depends(obten_sesion), id:int,token:str=Depends(autenticacion.validar_token_usuario)):
     print("Buscando con id:", id)
     
     user = repo.raza_id(sesion, id)
@@ -71,21 +95,21 @@ def raza_por_id(*,sesion:Session=Depends(obten_sesion), id:int):
 
 #Ruta Get para obtener la tabla de usuarios completa
 @app.get("/usuariosCompletos ")
-def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int):
+def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int,token:str=Depends(autenticacion.validar_token_usuario)):
     print("lote", lote, "pag:", pag)
     
     return repo.usuarios(sesion, lote, pag)
 
 #Ruta Get para obtener la tabla de razas completa
 @app.get("/razasCompletas")
-def razas_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int):
+def razas_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int,token:str=Depends(autenticacion.validar_token_usuario)):
     print("lote", lote, "pag:", pag)
     
     return repo.razas(sesion, lote, pag)
 
 #Ruta Post para crear/actualizar un avatar para el usuario
 @app.post("/usuario/{id}/avatar")
-async def guardar_usuario_avatar(*,sesion:Session=Depends(obten_sesion), id:int, foto:UploadFile=File(...)):
+async def guardar_usuario_avatar(*,sesion:Session=Depends(obten_sesion), id:int, foto:UploadFile=File(...),token:str=Depends(autenticacion.validar_token_usuario)):
 
     #guardamos el avatar del usuario
     
@@ -112,7 +136,7 @@ async def guardar_usuario_avatar(*,sesion:Session=Depends(obten_sesion), id:int,
 
 #Ruta POST para subir la imagen de usuario
 @app.post("/usuarios/{id}/foto")
-async def guardar_usuario_foto(*,sesion:Session=Depends(obten_sesion), id:int,foto:UploadFile=File(...)):
+async def guardar_usuario_foto(*,sesion:Session=Depends(obten_sesion), id:int,foto:UploadFile=File(...),token:str=Depends(autenticacion.validar_token_usuario)):
 
     #guardamos la imagen        
     nombre_archivo = uuid.uuid4().hex #Se genera noombre en formato hexadecimal 
@@ -138,21 +162,21 @@ async def guardar_usuario_foto(*,sesion:Session=Depends(obten_sesion), id:int,fo
 
 #Ruta GET para obtener una foto por id
 @app.get("/foto/{id_foto}")
-def foto_por_id(*,sesion:Session=Depends(obten_sesion), id_foto:int):
+def foto_por_id(*,sesion:Session=Depends(obten_sesion), id_foto:int,token:str=Depends(autenticacion.validar_token_usuario)):
     print("obteniendo foto con id:",id_foto)
     foto = repo.foto_por_id(sesion,id_foto)
     return foto
 
 #Ruta GET para obtener fotos por id usuario
 @app.get("/usuario/{id_usuario}/fotos")
-def foto_por_id(*,sesion:Session=Depends(obten_sesion), id_usuario:int, lote:int=10, pag:int):
+def foto_por_id(*,sesion:Session=Depends(obten_sesion), id_usuario:int, lote:int=10, pag:int,token:str=Depends(autenticacion.validar_token_usuario)):
     print("obteniendo fotos del usuario con id:",id_usuario)
     fotos = repo.fotos_por_idusuario(sesion,id_usuario, lote, pag)
     return fotos
 
 #Ruta PUT para corregir información de la raza
-@app.post("/foto/{id_foto}/correccion_raza")
-def correccion_raza(*,sesion:Session=Depends(obten_sesion), id_foto:int, correccion_raza:str=Body(...,embed=True)):
+@app.put("/foto/{id_foto}/correccion_raza")
+def correccion_raza(*,sesion:Session=Depends(obten_sesion), id_foto:int, correccion_raza:str=Body(...,embed=True),token:str=Depends(autenticacion.validar_token_usuario)):
     print("Se hará corrección raza:",correccion_raza,"para foto con id:", id_foto)
     foto = repo.actualizar_foto_correccion_raza(sesion, id_foto, correccion_raza)
     return foto

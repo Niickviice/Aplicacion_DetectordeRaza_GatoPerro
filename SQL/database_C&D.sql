@@ -9,11 +9,12 @@ CREATE TABLE app.users(
 	fecha_registro TIMESTAMP WITH TIME ZONE
 );
 
-INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('arcade_fire@gmail.com','1234567','Alberto Noruega','56765432','325fde34trfd34','2021-07-31T15:18:28+08:00');
-INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('eslaguitarradelolo@gmail.com','674567','Thom Yorke','55880099','898gt957ttj9j','2021-08-31T15:15:30+08:00');
-INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Kid_A@gmail.com','0037212','María Magdalena','52932793','op2k1ou90jew','2021-07-31T15:16:08+08:00');
-INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Beach_house@gmail.com','0832083','Mariana Villalon','52243432','13hs8d9wtrfd34','2021-07-31T15:09:22+08:00');
-INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Men_i_trust@gmail.com','9384756','Leida Figueroa','55094413','0ds3ed9j90qq0','2021-07-31T15:16:00+08:00');
+/*el password '1234' tiene password_hash='$2b$12$mDzoRKwt4pyIo3EThrsWFeKiUUVrpTPdF2V3YD/OG1AcQxuMGe3QO'*/
+INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('arcade_fire@gmail.com','$2b$12$mDzoRKwt4pyIo3EThrsWFeKiUUVrpTPdF2V3YD/OG1AcQxuMGe3QO','Alberto Noruega','56765432','325fde34trfd34','2021-07-31T15:18:28+08:00');
+INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('eslaguitarradelolo@gmail.com','$2b$12$mDzoRKwt4pyIo3EThrsWFeKiUUVrpTPdF2V3YD/OG1AcQxuMGe3QO','Thom Yorke','55880099','898gt957ttj9j','2021-08-31T15:15:30+08:00');
+INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Kid_A@gmail.com','$2b$12$mDzoRKwt4pyIo3EThrsWFeKiUUVrpTPdF2V3YD/OG1AcQxuMGe3QO','María Magdalena','52932793','op2k1ou90jew','2021-07-31T15:16:08+08:00');
+INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Beach_house@gmail.com','$2b$12$mDzoRKwt4pyIo3EThrsWFeKiUUVrpTPdF2V3YD/OG1AcQxuMGe3QO','Mariana Villalon','52243432','13hs8d9wtrfd34','2021-07-31T15:09:22+08:00');
+INSERT INTO app.users(email, password_hash, nombre, telefono, ruta_avatar, fecha_registro) VALUES('Men_i_trust@gmail.com','$2b$12$mDzoRKwt4pyIo3EThrsWFeKiUUVrpTPdF2V3YD/OG1AcQxuMGe3QO','Leida Figueroa','55094413','0ds3ed9j90qq0','2021-07-31T15:16:00+08:00');
 
 DROP TABLE IF EXISTS app.razas CASCADE;
 CREATE TABLE app.razas(

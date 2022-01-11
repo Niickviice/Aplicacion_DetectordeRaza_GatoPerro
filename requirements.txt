@@ -1,0 +1,13 @@
+numpy
+fastapi
+uvicorn
+python-multipart
+pydantic    
+SQLAlchemy
+psycopg2-binary
+tensorflow
+pickle
+Pillow
+python-jose
+cryptography
+passlib[bcrypt]
