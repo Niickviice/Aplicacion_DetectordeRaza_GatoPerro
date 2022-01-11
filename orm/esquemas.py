@@ -3,9 +3,8 @@ from pydantic import BaseModel
 class UsersBD(BaseModel):
     nombre:str
     email:str
-    password:str 
-    foto:int
-    telefono:int
+    password:str     
+    telefono:str
 
 class PrediccionRaza(BaseModel):
     porcentaje_primaria:float

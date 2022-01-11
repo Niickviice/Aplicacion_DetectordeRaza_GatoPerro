@@ -11,7 +11,7 @@
 #                               #
 #################################
 
-from fastapi import Depends, FastAPI, UploadFile, File, Form 
+from fastapi import Body, Depends, FastAPI, UploadFile, File, Form 
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
 from fastapi.param_functions import Form
@@ -40,10 +40,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 #Ruta Get para obtener la tabla de usuarios por id 
-@app.get("/usuarios/{id}")
-def usuarios(*,sesion:Session=Depends(obten_sesion), id:int):
+@app.get("/usuario/{id}")
+def usuario_por_id(*,sesion:Session=Depends(obten_sesion), id:int):
     print("Buscando con id:", id)
     
     user = repo.usuario_por_id(sesion, id)
@@ -57,14 +56,14 @@ def registro(*,sesion:Session=Depends(obten_sesion), usuario:UsersBD):
     return repo.guardar_usuario(sesion, usuario)
 
 #Ruta Put, para actualizar información del usuario 
-@app.put("usuario/{id}")
+@app.put("/usuario/{id}")
 def actualizar_usuario(*,sesion:Session=Depends(obten_sesion), id:int,  usuario:UsersBD):
     
     return repo.actualizar_usuario(sesion, id, usuario)
 
 #Ruta Get para obtener la tabla de razas por id 
 @app.get("/razas/{id}")
-def usuarios(*,sesion:Session=Depends(obten_sesion), id:int):
+def raza_por_id(*,sesion:Session=Depends(obten_sesion), id:int):
     print("Buscando con id:", id)
     
     user = repo.raza_id(sesion, id)
@@ -72,19 +71,20 @@ def usuarios(*,sesion:Session=Depends(obten_sesion), id:int):
 
 #Ruta Get para obtener la tabla de usuarios completa
 @app.get("/usuariosCompletos ")
-def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int, orden:Optional[str]=None):
-    print("lote", lote, "pag:", pag, "orden:", orden)
+def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int):
+    print("lote", lote, "pag:", pag)
     
     return repo.usuarios(sesion, lote, pag)
 
 #Ruta Get para obtener la tabla de razas completa
 @app.get("/razasCompletas")
-def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int, orden:Optional[str]=None):
-    print("lote", lote, "pag:", pag, "orden:", orden)
+def razas_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int):
+    print("lote", lote, "pag:", pag)
     
     return repo.razas(sesion, lote, pag)
 
-@app.post("/usuarios/{id}/avatar")
+#Ruta Post para crear/actualizar un avatar para el usuario
+@app.post("/usuario/{id}/avatar")
 async def guardar_usuario_avatar(*,sesion:Session=Depends(obten_sesion), id:int, foto:UploadFile=File(...)):
 
     #guardamos el avatar del usuario
@@ -135,6 +135,27 @@ async def guardar_usuario_foto(*,sesion:Session=Depends(obten_sesion), id:int,fo
         print("Se ha guardando en base datos info de la foto:",nombre_imagen)
 
         return foto
+
+#Ruta GET para obtener una foto por id
+@app.get("/foto/{id_foto}")
+def foto_por_id(*,sesion:Session=Depends(obten_sesion), id_foto:int):
+    print("obteniendo foto con id:",id_foto)
+    foto = repo.foto_por_id(sesion,id_foto)
+    return foto
+
+#Ruta GET para obtener fotos por id usuario
+@app.get("/usuario/{id_usuario}/fotos")
+def foto_por_id(*,sesion:Session=Depends(obten_sesion), id_usuario:int, lote:int=10, pag:int):
+    print("obteniendo fotos del usuario con id:",id_usuario)
+    fotos = repo.fotos_por_idusuario(sesion,id_usuario, lote, pag)
+    return fotos
+
+#Ruta PUT para corregir información de la raza
+@app.post("/foto/{id_foto}/correccion_raza")
+def correccion_raza(*,sesion:Session=Depends(obten_sesion), id_foto:int, correccion_raza:str=Body(...,embed=True)):
+    print("Se hará corrección raza:",correccion_raza,"para foto con id:", id_foto)
+    foto = repo.actualizar_foto_correccion_raza(sesion, id_foto, correccion_raza)
+    return foto
     
 #para hacer debugging
 if __name__ == "__main__":

@@ -32,11 +32,10 @@ INSERT INTO app.razas(raza, especie, descripcion, cuidados) VALUES('Maine Coon',
 
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Abyssinian','gato','Abisinio (gato)');
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('american_bulldog','perro','Bulldog americano');      
-INSERT INTO app.razas(raza, especie, raza_alias) VALUES('american_pit_bull_terrier','perro','American Pitbull 
-Terrier');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('american_pit_bull_terrier','perro','American Pitbull Terrier');
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('basset_hound','perro','Basset hound');
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('beagle','perro','Beagle');
-INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Bengal','gato','Bengala');
+INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Bengal','gato','Bengal');
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Birman','gato','Birmano');
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('Bombay','gato','Bombay');
 INSERT INTO app.razas(raza, especie, raza_alias) VALUES('boxer','perro','Boxer');

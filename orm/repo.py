@@ -27,12 +27,12 @@ def raza_por_nombre_raza(sesion: Session, nombre_raza: str):
 
 #guardar usuario
 def guardar_usuario(sesion : Session, usr:UsersBD):    
-    usr_nuevo = modelos.Users()
-    usr_nuevo = usr.nombre
+    usr_nuevo = modelos.Users()    
     usr_nuevo.email_user = usr.email
     usr_nuevo.password_hash = usr.password
+    usr_nuevo.nombre = usr.nombre
     usr_nuevo.telefono = usr.telefono
-    usr_nuevo.ruta_avatar = usr.ruta_avatar  
+    
     
     sesion.add(usr_nuevo)
     sesion.commit() #Guarda los cambios datos en la base de datos
@@ -89,5 +89,23 @@ def crear_foto(sesion:Session, id_usuario:int, nombre_imagen:str, predicciones:P
     sesion.refresh(foto)
 
     #print("PRIMARIA:",foto.razaPrimaria)
+    
+    return foto
+
+#Solicitud de foto (Por id)
+def foto_por_id(sesion : Session, id_foto : int):
+    return sesion.query(modelos.Fotos).filter(modelos.Fotos.id == id_foto).first()
+
+#Solicitud de fotos por id usuario (todos los renglones de la tabla fotos por id_users)
+def fotos_por_idusuario(sesion : Session, id_usuario:int, lote : int, pag : int):
+    return sesion.query(modelos.Fotos).filter(modelos.Fotos.id_users == id_usuario).limit(lote).offset(pag*lote).all()
+
+#actualizar campo correccion raza de una foto
+def actualizar_foto_correccion_raza(sesion:Session, id_foto:int, correcion_raza:str):
+    foto = foto_por_id(sesion, id_foto)
+    foto.correccion_raza = correcion_raza
+    
+    sesion.commit()
+    sesion.refresh(foto)
     
     return foto
