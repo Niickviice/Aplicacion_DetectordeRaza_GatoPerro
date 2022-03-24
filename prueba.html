@@ -1,36 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-
 <body>
-    <form method="post" action="http://localhost:8000/fotos">
+    <form method="post" action="http://localhost:8000/fotos" enctype="multipart/form-data" >
 
-        <div> Foto<input type="file" name="foto" /> </div>
+        <div> Foto<input type="file" name="foto"/> </div>
 
-        <div><input type="submit" name="enviar"></div>
+        <div><input type="submit" name="enviar" ></div>
     </form>
 </body>
 <script>
-    //IMPORTANTE: el token debe obtenerse previamente invocando /token y pegar el valor del campo "access_token"    
-    var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhcmNhZGVfZmlyZUBnbWFpbC5jb20iLCJleHAiOjE2NDE5Njc5NjZ9.c_t8vUEjLoPdYz4BiRY6NTx3hi0uaE41VOJXbtF6zSQ'
-    fetch('http://localhost:8000/usuario/1', {        
-        headers: {            
-            'Authorization': 'Bearer ' + token,
-        }
+    fetch("DOG_CAT_DETECTER/usuarios/1")
+    .then(function(respuesta){
+        return respuesta.json();
     })
-    .then(function(res){
-        return res.json()
-    })
-    .then(function(datos){
-        console.log(datos)
+    .then(function(datosJSON){
+        console.log(datosJson);
     });
-
 </script>
-
 </html>

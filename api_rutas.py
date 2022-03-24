@@ -93,6 +93,12 @@ def raza_por_id(*,sesion:Session=Depends(obten_sesion), id:int,token:str=Depends
     user = repo.raza_id(sesion, id)
     return user
 
+#Ruta Get para obtener el id del usuario que ha iniciado sesión
+@app.get("/usuarios/me")
+def usuario_en_login(*,sesion:Session=Depends(obten_sesion),email:str=Depends(autenticacion.validar_token_usuario)):
+    usuario = repo.usuario_por_email(sesion,email)
+    return usuario
+
 #Ruta Get para obtener la tabla de usuarios completa
 @app.get("/usuariosCompletos ")
 def usuarios_lista(*,sesion:Session=Depends(obten_sesion), lote:int=10, pag:int,token:str=Depends(autenticacion.validar_token_usuario)):
