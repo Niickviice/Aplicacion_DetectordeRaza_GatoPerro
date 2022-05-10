@@ -11,7 +11,7 @@
 #                               #
 #################################
 
-from fastapi import Body, Depends, FastAPI, UploadFile, File, Form,HTTPException, status
+from fastapi import Body, Depends, FastAPI, UploadFile, File, Form,HTTPException, Response,status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
@@ -24,7 +24,7 @@ import uuid
 import constantes as constantes
 import uvicorn
 from orm.config import obten_sesion
-from orm.esquemas import UsersBD
+from orm.esquemas import UsersBD, UsersBDUpdate
 import orm.repo as repo
 from sqlalchemy.orm import Session, session
 from fastapi.middleware.cors import CORSMiddleware
@@ -74,16 +74,48 @@ def usuario_por_id(*,sesion:Session=Depends(obten_sesion), id:int,token: str = D
 
 #Ruta post, para registrar nuevo usuario.
 @app.post("/registro")
-def registro(*,sesion:Session=Depends(obten_sesion), usuario:UsersBD):
-    print("Usuario registrado:", usuario)    
+def registro(*,sesion:Session=Depends(obten_sesion), usuario:UsersBD, response:Response):
     
-    return repo.guardar_usuario(sesion, usuario)
+    print("buscando usuario con email:", usuario.email) 
+    userdb = repo.usuario_por_email(sesion,usuario.email)
+    
+    if userdb != None:
+     print("ya existe el usuario con email:",usuario.email)
+     response.status_code =status.HTTP_409_CONFLICT
+    else:
+     print("creando nuevo usuario con info:",usuario)
+     return repo.guardar_usuario(sesion, usuario)    
+    
 
 #Ruta Put, para actualizar información del usuario 
 @app.put("/usuario/{id}")
-def actualizar_usuario(*,sesion:Session=Depends(obten_sesion), id:int,  usuario:UsersBD, token:str=Depends(autenticacion.validar_token_usuario)):
+def actualizar_usuario(*,sesion:Session=Depends(obten_sesion), id:int,  usuario:UsersBDUpdate, token:str=Depends(autenticacion.validar_token_usuario), response:Response):
+    if usuario.email != None:
+        #obtenemos info del usuario actual
+        usuario_a_actualizar = repo.usuario_por_id(sesion,id)
+        #verificamos que el email no sea de algún usuario que ya existe
+        print("buscando usuario con email:", usuario.email) 
+        userdb = repo.usuario_por_email(sesion,usuario.email)
     
+        if userdb != None and userdb.email_user!=usuario_a_actualizar.email_user:
+            print("ya existe el usuario con email:",usuario.email)
+            response.status_code =status.HTTP_409_CONFLICT
+            return #terminamos
+
+    print("petición put procederá a actualizar usuario con id:", id, ", con info:",usuario)    
     return repo.actualizar_usuario(sesion, id, usuario)
+
+#Ruta delete, para eliminar al usuario
+@app.delete("/usuario/{id}")
+def eliminar_usuario(*,sesion:Session=Depends(obten_sesion), id:int, token:str=Depends(autenticacion.validar_token_usuario), response:Response):
+    print("se eliminará usuario con id:",id, " y todas sus fotos asociadas")
+    re = repo.eliminar_fotos_por_id_usuario(sesion,id)
+    print("fotos eliminadas:", re)
+    print("eliminando usuario con id:",id)
+    repo.eliminar_usuario_por_id(sesion,id)    
+    print("usuario eliminado")
+
+    return {"estatus":"usuario eliminado"}
 
 #Ruta Get para obtener la tabla de razas por id 
 @app.get("/razas/{id}")

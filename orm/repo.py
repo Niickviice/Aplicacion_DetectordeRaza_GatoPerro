@@ -3,7 +3,7 @@ from sqlalchemy import func
 #Repositorio
 import orm.modelos as modelos
 import constantes as constantes
-from orm.esquemas import PrediccionRaza, UsersBD
+from orm.esquemas import PrediccionRaza, UsersBD, UsersBDUpdate
 from seguridad import autenticacion
 
 #Solicitud de usuarios (Por id)
@@ -17,6 +17,12 @@ def usuario_por_email(sesion : Session, email : str):
 #Solicitud de usuario (todos los renglones de la tabla razas)
 def usuarios(sesion : Session, lote : int, pag : int):
     return sesion.query(modelos.Users).limit(lote).offset(pag*lote).all()
+
+#eliminar usuario por id
+def eliminar_usuario_por_id(sesion:Session, id:int):
+    renglones_eliminados =  sesion.query(modelos.Users).filter(modelos.Users.id == id).delete()
+    sesion.commit() #Guarda los cambios datos en la base de datos
+    return renglones_eliminados
 
 #Solicitud de razas (todos los renglones de la tabla razas)
 def razas(sesion : Session, lote : int, pag : int):
@@ -46,13 +52,25 @@ def guardar_usuario(sesion : Session, usr:UsersBD):
     return usr_nuevo
 
 #actualizar usuario
-def actualizar_usuario(sesion:Session, id_usuario:int, usr:UsersBD):
+def actualizar_usuario(sesion:Session, id_usuario:int, usr:UsersBDUpdate):
+    print("actualizando usuario con id:", id_usuario, " con info:", usr);
     usr_act = usuario_por_id(sesion, id_usuario)
     
-    usr_act.nombre = usr.nombre
-    usr_act.email_user = usr.email
-    usr_act.password_hash = autenticacion.obtener_password_hash(usr.password)
-    usr_act.telefono = usr.telefono
+    if usr.nombre != None:
+        print("se actualizará nombre")
+        usr_act.nombre = usr.nombre
+
+    if usr.email != None:
+        print("se actualizará email")
+        usr_act.email_user = usr.email
+    
+    if usr.password != None:
+        print("se actualizará password")
+        usr_act.password_hash = autenticacion.obtener_password_hash(usr.password)
+
+    if usr.telefono != None:
+        print("se actualizará telefono")
+        usr_act.telefono = usr.telefono
 
     sesion.commit()
     sesion.refresh(usr_act)
@@ -99,6 +117,10 @@ def crear_foto(sesion:Session, id_usuario:int, nombre_imagen:str, predicciones:P
 #Solicitud de foto (Por id)
 def foto_por_id(sesion : Session, id_foto : int):
     return sesion.query(modelos.Fotos).filter(modelos.Fotos.id == id_foto).first()
+
+def eliminar_fotos_por_id_usuario(sesion : Session, id_usuario : int):    
+    renglones_eliminados= sesion.query(modelos.Fotos).filter(modelos.Fotos.id_users == id_usuario).delete()
+    return renglones_eliminados
 
 #Solicitud de fotos por id usuario (todos los renglones de la tabla fotos por id_users)
 def fotos_por_idusuario(sesion : Session, id_usuario:int, lote : int, pag : int):
